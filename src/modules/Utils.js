@@ -1,8 +1,8 @@
-import { useDispatch } from "react-redux";
 import { Habitat } from "../classes/Habitat";
 import { Player } from "../classes/Player";
 import { Pokemon } from "../classes/Pokemon";
-import { POKEDEX } from "../data/Database"
+import { POKEDEX } from "../data/Database";
+import ROUTES from "../data/Routes";
 
 export const Utils = {
 
@@ -79,5 +79,13 @@ export const Utils = {
     cloneObject(obj) {
         let nObj = obj;
         return nObj;
-    }
+    },
+    getRouteIndexByName(region,routeName) {
+        let i = 0;
+        while(i < ROUTES[region].length) {
+            if(ROUTES[region][i].name === routeName) {
+                return i;
+            } else { i++; }
+        }
+    },
 }

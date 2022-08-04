@@ -14,7 +14,6 @@ function App() {
   if(saveFile === "") {
     Utils.createSave();
   }
-  console.log(useSelector((state)=> state.player))
 
   return (
     <div className="App">

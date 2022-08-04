@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory";
 import { HabitatComponent } from "../components/HabitatComponent";
 import "../styles/containers/HabitatContainer.css";
 
@@ -10,8 +9,6 @@ export const HabitatContainer = () => {
     const habitatArray = useSelector((state)=>state.player.habitats);
     const currentHabitat = habitatArray[habitatIndex];
     const changeHabitat = (direction) => {
-        console.log(direction);
-        console.log(habitatArray[habitatIndex]);
         if(direction === "next" && habitatArray[habitatIndex + 1]) {
             setHabitatIndex(habitatIndex+1);
         } else if(direction === "prev" && habitatArray[habitatIndex - 1]) {

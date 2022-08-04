@@ -19,8 +19,8 @@ export const HabitatComponent = (props) => {
     let habitatPokeArray = [];
     let i = 0;
     while(i < props.habitat.pokemon.length) {
-        habitatPokeArray.push(<HabitatPokemonPod pokemon={props.habitat.pokemon} number={i} />);
-        habitatPokeArray.push(<div></div>);
+        habitatPokeArray.push(<HabitatPokemonPod pokemon={props.habitat.pokemon} number={i} key={i}/>);
+        habitatPokeArray.push(<div key={i+100}></div>);
         i++;
     }
 

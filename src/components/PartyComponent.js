@@ -14,7 +14,7 @@ export const PartyComponent = () => {
         setCurrentPartyPokemonSubPod(newState);
     }
     while(i < partyPokemon.length) {
-        partyPokemonPodArray.push(<PartyPokemonPod pokemon={i} subPodState={currentPartyPokemonSubPod} changeState={changeCurrentPartyPokemonSubPod}/>);
+        partyPokemonPodArray.push(<PartyPokemonPod pokemon={i} subPodState={currentPartyPokemonSubPod} changeState={changeCurrentPartyPokemonSubPod} key={i}/>);
         i++;
     }
     return(

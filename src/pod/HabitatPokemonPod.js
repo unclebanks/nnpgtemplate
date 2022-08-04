@@ -7,7 +7,6 @@ export const HabitatPokemonPod = (props) => {
 
     let pokeName = props.pokemon[props.number].name;
 
-    console.log(props);
     return(
         <div id="habitatPokemonPod" style={{"border": "1px solid black", "borderRadius": "5px"}}>
             <img alt={pokeName} src={PokemonFNImageImport[Utils.getPokedexIndexByName(pokeName) - 1][pokeName.toLowerCase()]}/>

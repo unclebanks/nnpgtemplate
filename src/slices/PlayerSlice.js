@@ -66,9 +66,9 @@ export const playerSlice = createSlice(
             changeRegion: (state, action) => {
                 state.location.region = action.payload.region;
                 switch(action.payload.region) {
-                    case "Kanto": state.location.route = "Pallet Town";
+                    case "Kanto": state.location.route = "Route 1";
                     break;
-                    case "Johto": state.location.route = "New Bark Town";
+                    case "Johto": state.location.route = "Route 29";
                     break;
                     default: window.location.reload();
                 }
@@ -92,6 +92,6 @@ export const playerSlice = createSlice(
     }
 )
 
-export const { addPokemon, addMultiplePokemon } = playerSlice.actions;
+export const { addPokemon, addMultiplePokemon, changeAppState, changeRegion, changeRoute } = playerSlice.actions;
 
 export default playerSlice.reducer;

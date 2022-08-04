@@ -11,6 +11,8 @@ export const LeftContainer = () => {
     switch(appState) {
         case "main": leftContainerToReturn = <PartyComponent />;
         break;
+        case "combat": leftContainerToReturn = <PartyComponent />;
+        break;
         default: leftContainerToReturn = "Error";
     };
 
