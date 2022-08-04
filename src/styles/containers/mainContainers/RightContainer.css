@@ -1,0 +1,5 @@
+#rightContainer {
+    grid-row: 1;
+    grid-column: 3;
+    overflow: auto;
+}

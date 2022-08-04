@@ -1,0 +1,9 @@
+#habitatPokemonPod > img {
+    height: 64px;
+    width: 64px;
+    margin-left: 25%;
+}
+#habitatPokemonPod {
+    display: grid;
+    grid-template-rows: 2fr 1fr;
+}

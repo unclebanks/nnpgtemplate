@@ -1,0 +1,9 @@
+#farmContainer {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 90% 10%;
+}
+#farmContainerButtons {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
