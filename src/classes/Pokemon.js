@@ -52,4 +52,11 @@ export class Pokemon {
     getGrowthRate() {
         return this.baseStats["growthRate"];
     };
+    avgAttack() { return (this.computedStats.atk + this.computedStats.spAtk) / 2; };
+    avgDefense() { return (this.computedStats.def + this.computedStats.spDef) / 2; };
+    takeDamage(enemyAttack) {
+        const damageToTake = ((enemyAttack - this.avgDefense() / 10) > 0 && Math.ceil((enemyAttack - this.avgDefense() / 10) * ((Math.random() + 0.1) * 2) / 100)) || 0;
+        this.setHp(this.currentHp - damageToTake);
+        return damageToTake;
+    };
 }
