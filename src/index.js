@@ -8,7 +8,9 @@ import { Provider } from 'react-redux';
 
 const store = configureStore(
   {
-    player: playerReducer
+    reducer: {
+      player: playerReducer
+    }
   }
 )
 
