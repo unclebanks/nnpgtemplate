@@ -21,7 +21,7 @@ export class Pokemon {
         this.caughtAt = Date.now();
         this.prestigeLevel = prestigeLevel;
         this.appliedVitamins = appliedVitamins;
-        this.currentHp = this.computeStats.hp;
+        this.currentHp = this.computeStats("hp");
     };
     setHp(newHp) { this.currentHp = newHp; };
     computeStats(statName) {

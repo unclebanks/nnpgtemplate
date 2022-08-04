@@ -10,6 +10,7 @@ export class Player {
     pokemon = [];
     pcPokemon = [];
     berryFields = [];
+    habitats = [];
     currentBoostedRoamer = {
         region: 'Kanto',
         route: 'Route 1',
@@ -53,6 +54,9 @@ export class Player {
             this.pcPokemon.push(poke);
         } else { this.pokemon.push(poke); }
     };
+    addHabitat(hF) {
+        this.habitats.push(hF);
+    };
     addBerryField(bF) {
         this.berryFields.push(bF);
     };
@@ -84,6 +88,7 @@ export class Player {
         this.wins = sF.wins;
         this.events = sF.events;
         this.berryFields = sF.berryFields;
+        this.habitats = sF.habitats;
     };
     changeRoute(newRoute) {
         this.settings.currentRouteId = newRoute;

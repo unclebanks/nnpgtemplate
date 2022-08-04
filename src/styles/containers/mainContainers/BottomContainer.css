@@ -1,0 +1,5 @@
+#bottomContainer {
+    grid-row: 2;
+    grid-column: 1 / 4;
+    outline: 2px solid black;
+}
