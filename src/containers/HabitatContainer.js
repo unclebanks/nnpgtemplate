@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory";
+import { HabitatComponent } from "../components/HabitatComponent";
 import "../styles/containers/HabitatContainer.css";
 
 export const HabitatContainer = () => {
@@ -7,26 +9,22 @@ export const HabitatContainer = () => {
     const [habitatIndex, setHabitatIndex] = useState(0);
     const habitatArray = useSelector((state)=>state.player.habitats);
     const currentHabitat = habitatArray[habitatIndex];
-    let habitatBackgroundColor = "white";
-
-    switch(currentHabitat.type) {
-        case "Fire": habitatBackgroundColor = "lightcoral";
-        break;
-        case "Water": habitatBackgroundColor = "lightblue";
-        break;
-        case "Grass": habitatBackgroundColor = "lightgreen";
-        break;
-        case "Electric": habitatBackgroundColor = "yellow";
-        break;
-        default: habitatBackgroundColor = "white";
+    const changeHabitat = (direction) => {
+        console.log(direction);
+        console.log(habitatArray[habitatIndex]);
+        if(direction === "next" && habitatArray[habitatIndex + 1]) {
+            setHabitatIndex(habitatIndex+1);
+        } else if(direction === "prev" && habitatArray[habitatIndex - 1]) {
+            setHabitatIndex(habitatIndex - 1);
+        } else { alert("End of Habitats.")}
     }
+
+
     return(
         <div id="habitatContainer">
-            <button>Prev</button>
-            <div style={{"backgroundColor": habitatBackgroundColor}}>
-                <span>{currentHabitat.type}</span>
-            </div>
-            <button>Next</button>
+            <button onClick={()=>{changeHabitat("prev")}}>Prev</button>
+            <HabitatComponent habitat={currentHabitat} />
+            <button onClick={()=>{changeHabitat("next")}}>Next</button>
         </div>
     )
 }
