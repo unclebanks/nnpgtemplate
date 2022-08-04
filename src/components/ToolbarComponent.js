@@ -12,7 +12,7 @@ export const ToolbarComponent = (props) => {
         <button onClick={()=>{dispatch(changeAppState({"appState": "combat"}))}}>Combat</button>
     </div>
     let combatToolbar = <div>
-        <button>Main</button>
+        <button onClick={()=>{dispatch(changeAppState({"appState": "main"}))}}>Main</button>
     </div>
 
     switch(props.appState) {

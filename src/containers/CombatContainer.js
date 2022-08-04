@@ -1,30 +1,47 @@
-import React, { useState } from "react";
+import React from "react";
 import ROUTES from "../data/Routes";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Utils } from "../modules/Utils";
 import { PokemonBNImageImport } from "../data/PokemonBackNormalImageImports";
 import { PokemonFNImageImport } from "../data/PokemonFrontNormalImageImports";
 import { Pokemon } from "../classes/Pokemon";
+import { attack, initializeBattle } from "../slices/WildCombatSlice";
 
-export const CombatContainer = () => {
+export const CombatContainer = (props) => {
 
-    let regionInfo = useSelector((state)=>state.player.location.region);
-    let routeInfo = useSelector((state)=>state.player.location.route);
+    let dispatch = useDispatch();
+    let regionInfo = props.player.location.region;
+    let routeInfo = props.player.location.route;
     let lowerLevel = ROUTES[regionInfo][Utils.getRouteIndexByName(regionInfo,routeInfo)].minLevel;
     let upperLevel = ROUTES[regionInfo][Utils.getRouteIndexByName(regionInfo,routeInfo)].maxLevel
-    let enemyArray = ROUTES[regionInfo][Utils.getRouteIndexByName(regionInfo,routeInfo)].pokes;
-    const [activeEnemyPokemonIndex,setActiveEnemyPokemon] = useState(0);
-    const [energyBar,setEnergyBar] = useState(6);
-    const activeEnemyPokemon = new Pokemon(Utils.getPokemonPokedexInfoByName(enemyArray[activeEnemyPokemonIndex]),upperLevel);
-    const playerActivePokemonIndex = useSelector((state)=>state.player.activePokeID);
-    const playerActivePokemon = useSelector((state)=>state.player.pokemon[playerActivePokemonIndex]);
-    const attackEnemy = () => {
-        activeEnemyPokemon.takeDamage(playerActivePokemon.avgAttack());
-        console.log(activeEnemyPokemon);
+    let enemyRoutesArray = ROUTES[regionInfo][Utils.getRouteIndexByName(regionInfo,routeInfo)].pokes;
+    let enemyObjArrayGenerator = (enemyRoutesArray) => {
+        let enemyPokeArray = [];
+        let i = 0;
+        console.log(enemyPokeArray);
+        while(i<enemyRoutesArray.length) {
+            let newPokemonToPush = new Pokemon(Utils.getPokemonPokedexInfoByName(enemyRoutesArray[i]), upperLevel);
+            enemyPokeArray.push(newPokemonToPush);
+            i++;
+        }
+        return enemyPokeArray;
+    }
+    let enemyObjArray = enemyObjArrayGenerator(enemyRoutesArray)
+    let activeEnemyIndex = props.wildCombat.enemyPokemonIndex;
+    let activeEnemyPokemon = new Pokemon(Utils.getPokemonPokedexInfoByName(enemyRoutesArray[activeEnemyIndex]),upperLevel);
+    let playerArray = props.player.pokemon;
+    let playerActivePokemonIndex = props.player.activePokeID;
+    let playerActivePokemon = props.player.pokemon[playerActivePokemonIndex];
+    let enemyDef = props.wildCombat;
+    let energyBar = props.wildCombat.battleEnergy;
+    dispatch(initializeBattle({"playerPokemonArray": playerArray, "enemyPokemonArray": enemyObjArray}))
+    let attackEnemy = () => {
+        console.log(enemyDef);
+        dispatch(attack({"attacker": "player"}));
     }
     console.log(playerActivePokemon);
     console.log(activeEnemyPokemon);
-    const renderEnergy = () => {
+    let renderEnergy = () => {
         let i = 0;
         let energyArray = [];
         while(i < energyBar) {

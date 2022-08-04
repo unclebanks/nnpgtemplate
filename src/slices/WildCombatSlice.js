@@ -24,11 +24,15 @@ export const wildCombatSlice = createSlice(
                 } else { state.activePlayerPokemon.hp -= (state.enemyActivePokemon.avgDefense() - state.activePlayerPokemon.avgAttack())}
             },
             initializeBattle: (state, action) => {
-                state.playerPokemonArray = action.payload.playerPokemonArray;
-                state.activePlayerPokemon = state.playerPokemonArray[state.playerPokemonIndex];
-                state.enemyPokemonArray = action.payload.enemyPokemonArray;
-                state.enemyActivePokemon = state.enemyPokemonArray[state.enemyPokemonIndex];
                 console.log(state);
+                console.log(action);
+                // state.playerPokemonArray = action.payload.playerPokemonArray;
+                // state.activePlayerPokemon = action.payload.playerPokemonArray[state.playerPokemonIndex];
+                // console.log(action.payload);
+                // state.enemyPokemonArray = action.payload.enemyPokemonArray;
+                // console.log(state.enemyPokemonArray);
+                // state.enemyActivePokemon = action.payload.enemyPokemonArray[state.enemyPokemonIndex];
+                // console.log(state);
             }
         }
     }
