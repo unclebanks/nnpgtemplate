@@ -88,4 +88,8 @@ export const Utils = {
             } else { i++; }
         }
     },
+    RNG(chance) {
+        const rnd = Math.random() * 100;
+        return (rnd < chance);
+    }
 }

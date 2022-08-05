@@ -43,7 +43,7 @@ export const PartyPokemonPod = (props) => {
             </div>
             <div className="partyPokemonPodImage" style={{"backgroundColor": pokeTypeColor, "height": "100%"}}>
                 <img src={PokemonFNImageImport[Utils.getPokedexIndexByName(pokemonToRender.name) - 1][pokemonToRender.name.toLowerCase()]} alt={pokemonToRender.name}/>
-                <div>{pokemonToRender.name}<br/> LV: {pokemonToRender.currentLevel()}</div>
+                <div>{pokemonToRender.name}<br/> LV: {pokemonToRender.level}</div>
             </div>
             {partySubPodToReturn}
         </div>

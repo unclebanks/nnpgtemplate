@@ -23,6 +23,7 @@ export class Pokemon {
         this.appliedVitamins = appliedVitamins;
         this.currentHp = this.computeStats("hp");
     };
+    alive() { return this.currentHp > (-1); };
     setHp(newHp) { this.currentHp = newHp; };
     computeStats(statName) {
         let raw = this.baseStats[statName];
@@ -47,6 +48,7 @@ export class Pokemon {
         while(this.currentExp > this.expTable[i]) {
             i++;
         }
+        this.level = i+1;
         return i + 1;
     };
     getGrowthRate() {
@@ -58,5 +60,8 @@ export class Pokemon {
         const damageToTake = ((enemyAttack - this.avgDefense() / 10) > 0 && Math.ceil((enemyAttack - this.avgDefense() / 10) * ((Math.random() + 0.1) * 2) / 100)) || 0;
         this.setHp(this.currentHp - damageToTake);
         return damageToTake;
+    };
+    giveExp(expToGive) {
+        this.currentExp += expToGive;
     };
 }

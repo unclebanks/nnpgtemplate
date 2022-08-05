@@ -4,14 +4,12 @@ import './index.css';
 import App from './App';
 import { configureStore } from '@reduxjs/toolkit';
 import playerReducer from './slices/PlayerSlice';
-import wildCombatReducer from "./slices/WildCombatSlice";
 import { Provider } from 'react-redux';
 
 const store = configureStore(
   {
     reducer: {
       player: playerReducer,
-      wildCombat: wildCombatReducer
     }
   }
 )
