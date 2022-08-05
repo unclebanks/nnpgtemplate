@@ -1,20 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import ROUTES from "../data/Routes";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Utils } from "../modules/Utils";
 import { PokemonBNImageImport } from "../data/PokemonBackNormalImageImports";
 import { PokemonFNImageImport } from "../data/PokemonFrontNormalImageImports";
 import { Pokemon } from "../classes/Pokemon";
 import { attack, initializeBattle } from "../slices/WildCombatSlice";
 
-export const CombatContainer = (props) => {
+export const CombatContainer = () => {
 
+
+    const [turn, setTurn] = useState("player");
     let dispatch = useDispatch();
-    let regionInfo = props.player.location.region;
-    let routeInfo = props.player.location.route;
+
+    //Load WildCombat Information
+    let wildCombat = useSelector((state)=> state.wildCombat);
+
+    //Load Player Information
+    let playerInfo = useSelector((state)=>state.player);
+    
+    // Load Energy Status
+    let energyBar = wildCombat.battleEnergy;
+
+
+    // Load Location Information : 
+    let locInfo = useSelector((state) => state.player.location);
+    let regionInfo = locInfo.region;
+    let routeInfo = locInfo.route;
     let lowerLevel = ROUTES[regionInfo][Utils.getRouteIndexByName(regionInfo,routeInfo)].minLevel;
     let upperLevel = ROUTES[regionInfo][Utils.getRouteIndexByName(regionInfo,routeInfo)].maxLevel
     let enemyRoutesArray = ROUTES[regionInfo][Utils.getRouteIndexByName(regionInfo,routeInfo)].pokes;
+
+    // Start Creating Enemy Team
     let enemyObjArrayGenerator = (enemyRoutesArray) => {
         let enemyPokeArray = [];
         let i = 0;
@@ -26,17 +43,19 @@ export const CombatContainer = (props) => {
         }
         return enemyPokeArray;
     }
-    let enemyObjArray = enemyObjArrayGenerator(enemyRoutesArray)
-    let activeEnemyIndex = props.wildCombat.enemyPokemonIndex;
+    let enemyObjArray = enemyObjArrayGenerator(enemyRoutesArray);
+    console.log(enemyObjArray);
+    let activeEnemyIndex = wildCombat.enemyPokemonIndex;
     let activeEnemyPokemon = new Pokemon(Utils.getPokemonPokedexInfoByName(enemyRoutesArray[activeEnemyIndex]),upperLevel);
-    let playerArray = props.player.pokemon;
-    let playerActivePokemonIndex = props.player.activePokeID;
-    let playerActivePokemon = props.player.pokemon[playerActivePokemonIndex];
-    let enemyDef = props.wildCombat;
-    let energyBar = props.wildCombat.battleEnergy;
-    dispatch(initializeBattle({"playerPokemonArray": playerArray, "enemyPokemonArray": enemyObjArray}))
+
+    // Start Creating Player Team
+    let playerArray = playerInfo.pokemon;
+    let playerActivePokemonIndex = playerInfo.activePokeID;
+    let playerActivePokemon = playerArray[playerActivePokemonIndex];
+
+
+    // dispatch(initializeBattle({"playerPokemonArray": playerArray, "enemyPokemonArray": enemyObjArray}))
     let attackEnemy = () => {
-        console.log(enemyDef);
         dispatch(attack({"attacker": "player"}));
     }
     console.log(playerActivePokemon);
@@ -54,19 +73,31 @@ export const CombatContainer = (props) => {
     return(
         <div style={{"display":"grid","gridTemplateRows": "80% 20%", "height": "100%"}}>
             <div id="pokemonBattleComponent" style={{"display":"grid","gridTemplateRows": "50% 50%"}}>
-                <div>
-                    <div>Max HP: {activeEnemyPokemon.computedStats.hp}/ Current HP: {activeEnemyPokemon.currentHp}</div>
-                    <div>
-                        <img alt={activeEnemyPokemon.name} src={PokemonFNImageImport[Utils.getPokedexIndexByName(activeEnemyPokemon.name) - 1][activeEnemyPokemon.name.toLowerCase()]}/>
+                <div style={{"display": "grid","gridTemplateColumns": "50% 50%", "backgroundColor": "lightcoral"}}>
+                    <div style={{"display": "grid","gridTemplateColumns": "50% 50%"}}>
+                        <div>Possible Wild Pokemon</div>
+                        <div></div>
                     </div>
-                    <div>Exp Bar</div>
+                    <div style={{"marginTop": "25%"}}>
+                        <div>Max HP: {activeEnemyPokemon.computedStats.hp}/ Current HP: {activeEnemyPokemon.currentHp}</div>
+                        <div>
+                            <img alt={activeEnemyPokemon.name} src={PokemonFNImageImport[Utils.getPokedexIndexByName(activeEnemyPokemon.name) - 1][activeEnemyPokemon.name.toLowerCase()]}/>
+                        </div>
+                        <div>Exp Bar</div>
+                    </div>
                 </div>
-                <div>
-                    <div>HP Bar</div>
-                    <div>
-                        <img alt={playerActivePokemon.name} src={PokemonBNImageImport[Utils.getPokedexIndexByName(playerActivePokemon.name) - 1][playerActivePokemon.name.toLowerCase()]}/>
+                <div style={{"display": "grid","gridTemplateColumns": "50% 50%", "backgroundColor": "lightblue"}}>
+                    <div style={{"marginTop": "25%"}}>
+                        <div>HP Bar</div>
+                        <div>
+                            <img alt={playerActivePokemon.name} src={PokemonBNImageImport[Utils.getPokedexIndexByName(playerActivePokemon.name) - 1][playerActivePokemon.name.toLowerCase()]}/>
+                        </div>
+                        <div>Exp Bar</div>
                     </div>
-                    <div>Exp Bar</div>
+                    <div style={{"display": "grid","gridTemplateColumns": "50% 50%"}}>
+                        <div></div>
+                        <div>Party Pokemon</div>
+                    </div>
                 </div>
             </div>
             <div style={{"outline":"4px dotted black", "display":"grid","gridTemplateRows":"20% 80%"}}>
