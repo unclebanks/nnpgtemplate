@@ -54,7 +54,8 @@ export const playerSlice = createSlice(
                 "Calcium": 5,
                 "Zinc": 5,
                 "Carbos": 5
-            }
+            },
+            battle: false
         },
         reducers: {
             addCoins: (state, action) => {
@@ -88,6 +89,12 @@ export const playerSlice = createSlice(
                     state.pokemon.push(action.payload.pokemon);
                 }
             },
+            startBattle(state) {
+                state.battle = true;
+            },
+            stopBattle(state) {
+                state.battle = false;
+            }
         }
     }
 )
