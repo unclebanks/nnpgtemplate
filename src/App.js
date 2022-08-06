@@ -17,10 +17,10 @@ function App() {
 
   return (
     <div className="App">
-      <LeftContainer />
+      {/* <LeftContainer />
       <CenterContainer />
       <RightContainer />
-      <BottomContainer />
+      <BottomContainer /> */}
     </div>
   );
 }
