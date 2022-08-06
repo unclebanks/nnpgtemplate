@@ -7,6 +7,7 @@ export const WorkFile = () => {
     const [processType,setProcessType] = useState("none");
     const [startNumber,setStartNumber] = useState(1);
     const [endNumber, setEndNumber] = useState(26);
+    const [pokemonIndex, setPokemonIndex] = useState(0);
     let pokeArray = [];
     let pokeDataSave = JSON.parse(localStorage.getItem("v26"))? JSON.parse(localStorage.getItem("v26")): {name:"",moves:""};
 
@@ -61,6 +62,20 @@ export const WorkFile = () => {
     const testButton = () => {
         let preList = JSON.parse(localStorage.getItem("v26Processed"));
         // Start here. We need to process EACH MOVE from EACH POKEMON on its own.
+        let pokeMoveArray = [];
+        let i = 0;
+        while(i < preList[0].moves.length) {
+            pokeMoveArray.push(preList[pokemonIndex].moves[i]);
+            i++;
+        };
+        localStorage.setItem("v26MovesArray", JSON.stringify(pokeMoveArray));
+        let j = 0;
+        let pokeMoveSecondArray = [];
+        while(j<pokeMoveArray.length) {
+            pokeMoveSecondArray.push({name:pokeMoveArray[j].move.name, details: pokeMoveArray[j].version_group_details[0]});
+            j++;
+        }
+        console.log(pokeMoveSecondArray);
         // We are doing this to make sure that the moves are getting the proper data from each region.
         // IE Moves that were only in Red would crash stuff if we set the code to only look in the new games.
         // This is time consuming but makes sure there is super dope support.
@@ -97,6 +112,8 @@ export const WorkFile = () => {
                 </div>
             </div>
             <div>
+                    <span>PokemonDataIndex: </span>
+                    <input type="text" onChange={(e)=> {setProcessType(e.target.value)}}/>
                 <button onClick={()=>{testButton()}}>Test4NOW</button>
             </div>
         </div>
