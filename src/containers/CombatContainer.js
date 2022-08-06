@@ -6,6 +6,7 @@ import { PokemonBNImageImport } from "../data/PokemonBackNormalImageImports";
 import { PokemonFNImageImport } from "../data/PokemonFrontNormalImageImports";
 import { Pokemon } from "../classes/Pokemon";
 import { TypeModifiers } from "../data/TypeModifiers";
+import { CombatHpPod } from "../pod/CombatHpPod";
 
 export const CombatContainer = () => {
 
@@ -62,56 +63,63 @@ export const CombatContainer = () => {
         }
         return energyArray;
     }
-    // let testAttack = () => {
-    //     setCombatState({...combatState, enemyActivePokemon: {...combatState.enemyActivePokemon, currentHp: 5} })
-    // };     
-    const enemyFaint = () => {
+    const enemyFaint = (player, enemy) => {
         let pokeTeamCopy = combatState.playerPokemonTeam;
         //attemptCatch();
-        const foundPokeCoins = Math.floor(combatState.enemyActivePokemon.currentLevel() * 4);
+        const foundPokeCoins = Math.floor(enemy.currentLevel() * 4);
         // useDispatch(addCoins({"type": "pokecoins", "amount": foundPokeCoins}));
         // Save this for the final dispatch with spread ^^^
 
         const beforeExp = playerInfo.pokemon.map((poke) => poke.currentLevel());
-        const expToGive = (combatState.enemyActivePokemon.baseExp / 16) + (combatState.enemyActivePokemon.currentLevel() * 3);
-        pokeTeamCopy[combatState.playerActiveIndex].giveExp(expToGive);
-        pokeTeamCopy.forEach((poke) => poke.giveExp((combatState.enemyActivePokemon.baseExp / 100) + (combatState.enemyActivePokemon.currentLevel() / 10)));
+        const expToGive = (enemy.baseExp / 16) + (enemy.currentLevel() * 3);
+        player.giveExp(expToGive);
+        pokeTeamCopy.forEach((poke) => poke.giveExp((enemy.baseExp / 100) + (enemy.currentLevel() / 10)));
         pokeTeamCopy.map((poke) => poke.currentLevel());
         console.log(foundPokeCoins);
+        enemy.resetHp();
         let enemyNextActive = ((combatState.enemyActiveIndex+1) >= combatState.enemyPokemonTeam.length)? combatState.enemyPokemonTeam[0]:combatState.enemyPokemonTeam[combatState.enemyActiveIndex+1];
         let indexCopy = ((combatState.enemyActiveIndex+1) >= combatState.enemyPokemonTeam.length)? 0: combatState.enemyActiveIndex + 1;
-        setCombatState({...combatState, playerPokemonTeam: pokeTeamCopy, enemyActiveIndex: indexCopy, enemyActivePokemon: enemyNextActive});
+        setCombatState({...combatState,playerActivePokemon: player, playerPokemonTeam: pokeTeamCopy, enemyActiveIndex: indexCopy, enemyActivePokemon: enemyNextActive});
         console.log(combatState);
-
-        // player.savePokes();
-        // Combat.newEnemy();
-        // Combat.enemyTimer();
-        // Combat.playerTimer();
     };
     const dealDamage = (who) => {
-            if (combatState.playerActivePokemon.alive() && combatState.enemyActivePokemon.alive()) {
-                //calculate damage done
+        let tempPlayerActivePokemon = combatState.playerActivePokemon;
+        let tempEnemyActivePokemon = combatState.enemyActivePokemon;
+        if (tempPlayerActivePokemon.alive() && tempEnemyActivePokemon.alive()) {
+            //calculate damage done
+            if(who === "player") {
                 const missRNG = Utils.RNG(5);
                 if (!missRNG) {
                     const critRNG = Utils.RNG(5);
-                    const critMultiplier = (critRNG) ? 1 + (combatState.playerActivePokemon.currentLevel() / 100) : 1;
-                    const damageMultiplier = calculateDamageMultiplier(combatState.playerActivePokemon.baseStats.types, combatState.enemyActivePokemon.baseStats.types) * critMultiplier;
-                    combatState.enemyActivePokemon.takeDamage(combatState.playerActivePokemon.avgAttack() * damageMultiplier);
+                    const critMultiplier = (critRNG) ? 1 + (tempPlayerActivePokemon.currentLevel() / 100) : 1;
+                    const damageMultiplier = calculateDamageMultiplier(tempPlayerActivePokemon.baseStats.types, tempEnemyActivePokemon.baseStats.types) * critMultiplier;
+                    tempEnemyActivePokemon.takeDamage(tempPlayerActivePokemon.avgAttack() * damageMultiplier);
+                    energyBar -= 2;
                 }
+            } else if(who === "enemy") {
+                const critRNG = Utils.RNG(5);
+                const critMultiplier = (critRNG) ? 1 + (tempEnemyActivePokemon.currentLevel() / 100) : 1;
+                const damageMultiplier = calculateDamageMultiplier(tempEnemyActivePokemon.baseStats.types, tempPlayerActivePokemon.baseStats.types) * critMultiplier;
+                tempPlayerActivePokemon.takeDamage(tempEnemyActivePokemon.avgAttack() * damageMultiplier);
+                energyBar += 1;
             }
-            if (!combatState.playerActivePokemon.alive() || !combatState.enemyActivePokemon.alive()) {
-            //one is dead
-
-                if (((who === 'enemy') && !combatState.playerActivePokemon.alive()) || ((who === 'player') && !combatState.enemyActivePokemon.alive())) {
-                    console.log("enemy died");
-                    enemyFaint();
-                } else {
-                    console.log("player died");
-                }
-            } else { 
-                let enemyCopy = combatState.enemyActivePokemon;
-                setCombatState({...combatState, enemyActivePokemon: enemyCopy })
+        }
+        if(energyBar > 6) {
+            energyBar = 6;
+        } else if(energyBar < 0) {
+            energyBar = 0;
+        }
+        // Check if someone died.
+        if (!tempPlayerActivePokemon.alive() || !tempEnemyActivePokemon.alive()) {
+            if ((who === 'player') && !tempEnemyActivePokemon.alive()) {
+                console.log("enemy died");
+                enemyFaint(tempPlayerActivePokemon, tempEnemyActivePokemon);
+            } else if((who === "enemy") && !tempPlayerActivePokemon.alive()) {
+                console.log("player died");
             }
+        } else { 
+            setCombatState({...combatState, enemyActivePokemon: tempEnemyActivePokemon, playerEnergy: energyBar, playerActivePokemon: tempPlayerActivePokemon});
+        }
     };
     const calculateDamageMultiplier = (attackingTypes, defendingTypes) => {
         const typeEffectiveness = (attackingType, defendingTypes) => TypeModifiers[attackingType][defendingTypes[0]] * ((defendingTypes[1] && TypeModifiers[attackingType][defendingTypes[1]]) || 1);
@@ -120,6 +128,10 @@ export const CombatContainer = () => {
             (attackingTypes[1] && typeEffectiveness(attackingTypes[1], defendingTypes)) || 0,
         );
     };
+    const playerAttack = () => {
+        dealDamage("player");
+        dealDamage("enemy");
+    }
 
     console.log(combatState);
     return(
@@ -130,21 +142,29 @@ export const CombatContainer = () => {
                         <div>Possible Wild Pokemon</div>
                         <div></div>
                     </div>
-                    <div style={{"marginTop": "25%"}}>
-                        <div>Max HP: {combatState.enemyActivePokemon.computedStats.hp}/ Current HP: {combatState.enemyActivePokemon.currentHp}</div>
+                    <div style={{"display":"grid","gridTemplateRows": "25% 25% 50%"}}>
+                        {/* <div>Max HP: {combatState.enemyActivePokemon.computedStats.hp}/ Current HP: {combatState.enemyActivePokemon.currentHp}</div> */}
+                        <div></div>
+                        <CombatHpPod stats={combatState.enemyActivePokemon}/>
+                        {/* <div style={{"width":"100%","height":"100%", "display":"grid", "gridTemplateRows":"50% 50%"}}>
+                            <div>HP: {combatState.enemyActivePokemon.currentHp}/{combatState.enemyActivePokemon.computedStats.hp}</div>
+                            <div style={{"backgroundColor": "lightgray", "width":"100%","height":"100%"}}>
+                                <div style={{"height":"100%","width": `${((combatState.enemyActivePokemon.currentHp/combatState.enemyActivePokemon.computedStats.hp)*100)}%`, "backgroundColor":"green"}}></div>
+                            </div>
+                        </div> */}
                         <div>
                             <img alt={combatState.enemyActivePokemon.name} src={PokemonFNImageImport[Utils.getPokedexIndexByName(combatState.enemyActivePokemon.name) - 1][combatState.enemyActivePokemon.name.toLowerCase()]}/>
                         </div>
-                        <div>Exp Bar</div>
                     </div>
                 </div>
                 <div style={{"display": "grid","gridTemplateColumns": "50% 50%", "backgroundColor": "lightblue"}}>
-                    <div style={{"marginTop": "25%"}}>
-                        <div>HP Bar</div>
+                    <div style={{"display":"grid","gridTemplateRows": "25% 25% 50%"}}>
+                        <div></div>
+                        <CombatHpPod stats={combatState.playerActivePokemon} />
                         <div>
                             <img alt={combatState.playerActivePokemon.name} src={PokemonBNImageImport[Utils.getPokedexIndexByName(combatState.playerActivePokemon.name) - 1][combatState.playerActivePokemon.name.toLowerCase()]}/>
+                            <div>Exp Bar</div>
                         </div>
-                        <div>Exp Bar</div>
                     </div>
                     <div style={{"display": "grid","gridTemplateColumns": "50% 50%"}}>
                         <div></div>
@@ -153,9 +173,9 @@ export const CombatContainer = () => {
                 </div>
             </div>
             <div style={{"outline":"4px dotted black", "display":"grid","gridTemplateRows":"20% 80%"}}>
-                <div style={{"display":"grid","gridTemplateColumns": `repeat(${renderEnergy().length}, 1fr)`}}>{renderEnergy()}</div>
+                <div style={{"display":"grid","gridTemplateColumns": `repeat(6, 1fr)`}}>{renderEnergy()}</div>
                 <div style={{"display":"grid","gridTemplateColumns": "50% 50%","gridTemplateRows":"50% 50%"}}>
-                    <button onClick={()=>{dealDamage("player")}}>Attack (minEnergy - maxEnergy)</button>
+                    <button onClick={()=>{playerAttack()}}>Attack 2 Energy</button>
                     <button onClick={()=>{console.log(combatState.enemyActivePokemon)}}>Pokemon 3 Energy</button>
                     <button>Bag (minEnergy - maxEnergy)</button>
                     <button>Run 4 Energy</button>

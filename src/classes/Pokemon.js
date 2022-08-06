@@ -23,7 +23,7 @@ export class Pokemon {
         this.appliedVitamins = appliedVitamins;
         this.currentHp = this.computeStats("hp");
     };
-    alive() { return this.currentHp > (-1); };
+    alive() { return this.currentHp > 0; };
     setHp(newHp) { this.currentHp = newHp; };
     computeStats(statName) {
         let raw = this.baseStats[statName];
@@ -63,5 +63,8 @@ export class Pokemon {
     };
     giveExp(expToGive) {
         this.currentExp += expToGive;
+    };
+    resetHp() {
+        this.currentHp = this.computeStats("hp");
     };
 }
